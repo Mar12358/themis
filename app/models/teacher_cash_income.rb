@@ -6,19 +6,20 @@ class TeacherCashIncome < ActiveRecord::Base
   validates_presence_of :date
   validates_presence_of :teacher
 
-  PAYMENT_ON_TEACHER = 'teacher'
-  PAYMENT_ON_SCHOOL = 'school'
+  PAYMENT_ON_TEACHER = 'teacher'.freeze
+  PAYMENT_ON_SCHOOL = 'school'.freeze
 
   scope :owed, -> { where(payment_status: PAYMENT_ON_TEACHER) }
   scope :handed, -> { where(payment_status: PAYMENT_ON_SCHOOL) }
-  scope :handed_at_month, -> (time) { handed.where('transferred_at >= ?', time.at_beginning_of_month).where('transferred_at < ?', time.at_beginning_of_month.next_month) }
+  scope :handed_at_month, lambda { |time|
+                            handed.where('transferred_at >= ?', time.at_beginning_of_month).where('transferred_at < ?', time.at_beginning_of_month.next_month)
+                          }
 
   before_create do
     self.payment_status = PAYMENT_ON_TEACHER
   end
 
   before_destroy do
-    self.payment_status != PAYMENT_ON_SCHOOL
+    payment_status != PAYMENT_ON_SCHOOL
   end
-
 end

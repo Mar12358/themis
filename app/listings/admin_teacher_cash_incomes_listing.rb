@@ -12,14 +12,10 @@ class AdminTeacherCashIncomesListing < Listings::Base
     income.date.to_human
   end
 
-  column :type do |income|
-    income.kind_description
-  end
+  column :type, &:kind_description
 
   column 'Curso' do |income|
-    if income.respond_to?(:course_log)
-      income.course_log.try { |c| c.course.description(:short_track, :time) }
-    end
+    income.course_log.try { |c| c.course.description(:short_track, :time) } if income.respond_to?(:course_log)
   end
 
   column 'Profesor' do |income|
@@ -31,9 +27,7 @@ class AdminTeacherCashIncomesListing < Listings::Base
   end
 
   column 'Alumno' do |income|
-    if income.respond_to?(:student)
-      income.student.display_name
-    end
+    income.student.display_name if income.respond_to?(:student)
   end
 
   column :payment_amount do |income|
@@ -43,7 +37,7 @@ class AdminTeacherCashIncomesListing < Listings::Base
   column :payment_status do |income|
     case income.payment_status
     when TeacherCashIncome::PAYMENT_ON_TEACHER
-      "Profesor"
+      'Profesor'
     when TeacherCashIncome::PAYMENT_ON_SCHOOL
       School.description
     else
@@ -52,5 +46,4 @@ class AdminTeacherCashIncomesListing < Listings::Base
   end
 
   export :xls, :csv
-
 end

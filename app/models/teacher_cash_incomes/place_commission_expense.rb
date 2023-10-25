@@ -4,16 +4,16 @@ module TeacherCashIncomes
     validates_presence_of :place
 
     def self.find_or_initialize_by_student_course_log(student_course_log)
-      find_or_initialize_by student_course_log: student_course_log do |income|
-      end
+      # find_or_initialize_by student_course_log: student_course_log do |income|
+      # end
     end
 
     def kind_description
-      "Comisión sala"
+      'Comisión sala'
     end
 
     before_validation do
-      self.place = self.student_course_log.course_log.course.place
+      self.place = student_course_log.course_log.course.place
     end
   end
 end

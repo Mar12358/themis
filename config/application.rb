@@ -1,7 +1,6 @@
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
-require_relative '../lib/rails_ext/async_adapter.rb'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -22,7 +21,6 @@ module Themis
     config.i18n.default_locale = 'es-AR'
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
-    config.active_record.raise_in_transactional_callbacks = true
 
     config.generators.stylesheets = false
     config.generators.javascripts = false
@@ -31,11 +29,14 @@ module Themis
     config.action_mailer.default_url_options = Settings.default_url_options.to_h
     config.action_mailer.asset_host = "http://#{Settings.default_url_options.host}"
 
-    config.autoload_paths << "#{Rails.root}/lib"
+    config.autoload_paths << Rails.root.join('lib')
     config.autoload_paths << "#{Rails.root}/actions"
 
     config.react.addons = true
 
     config.active_job.queue_adapter = :async
+    config.assets.paths << Rails.root.join("vendor")
+    config.assets.precompile += %w( *.scss )
+
   end
 end
